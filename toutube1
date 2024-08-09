@@ -1,38 +1,55 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.openjfx</groupId>
-  <artifactId>hellofx</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
-  <name>demo</name>
-  <url>http://maven.apache.org</url>
+----------------------------------------------------------
+New Frodo version (TODO: automate these tasks)
+----------------------------------------------------------
+1. Publish through gradle task:
+- ./gradlew publishFrodo
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>21</javafx.version>
-    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-  </properties>
+2. Upload pom.xml manually (there is an issue with the publishing plugin) and publish on bintray:
+- https://github.com/novoda/bintray-release
+- https://github.com/novoda/bintray-release/issues/19
 
-  <dependencies>
-    <dependency>
-      <groupId>org.openjfx</groupId>
-      <artifactId>javafx-controls</artifactId>
-      <version>${javafx.version}</version>
-    </dependency>
-  </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <version>${javafx.maven.plugin.version}</version>
-        <configuration>
-          <mainClass>HelloFX</mainClass>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
-</project>
+3. Generate and upload javadoc and sources manually on bintray for frodo-runtime:
+- ./gradlew -p frodo-runtime/ androidJavadocsJar
+- ./gradlew -p frodo-runtime/ androidSourcesJar
+- https://bintray.com/android10/maven
+
+3. Delete any local frodo repository and try the plugin with a new clean android project.
+- cd ~/.m2/repository/com/fernandocejas
+- rm -rf frodo/
+
+4. Create a tag on github:
+- git tag
+- git tag -a v0.8.4 -m "Release version 0.8.4"
+- git tag
+- git show v0.8.4
+- git push origin v0.8.4
+
+5. Release Notes: and description in both Github and Bintray.
+- Frodo wiki on github: https://github.com/android10/frodo/wiki
+- Bintray description: https://bintray.com/android10/maven
+
+6. Prepare for the next development version:
+- FrodoPlugin class project.dependencies
+- gradle.properties 'version' property
+- add new version CHANGELOG.txt file
+
+7. Install new version by running either of these tasks:
+- ./install_frodo.sh
+- ./gradlew installFrodoAndroidSample
+
+8. Promote new version released
+----------------------------------------------------------
+
+----------------------------------------------------------
+POSSIBLE ISSUE #1
+----------------------------------------------------------
+- Installing frodo through './install_frodo.sh' can trigger this exception:
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':frodo-runtime:install'.
+> A problem occurred starting process 'command 'mvn''
+
+- Solution: Stop Gradle by executing: './gradlew --stop'
+----------------------------------------------------------
